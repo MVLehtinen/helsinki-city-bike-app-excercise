@@ -12,8 +12,8 @@ using bike_webapi.Data;
 namespace bike_webapi.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20230524104332_AddJourneyAndStationModels")]
-    partial class AddJourneyAndStationModels
+    [Migration("20230524175737_JourneyAndStationFixedRelations")]
+    partial class JourneyAndStationFixedRelations
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -63,10 +63,7 @@ namespace bike_webapi.Migrations
             modelBuilder.Entity("bike_webapi.Models.Station", b =>
                 {
                     b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<string>("Adress")
                         .IsRequired()
@@ -116,13 +113,13 @@ namespace bike_webapi.Migrations
             modelBuilder.Entity("bike_webapi.Models.Journey", b =>
                 {
                     b.HasOne("bike_webapi.Models.Station", "DepartureStation")
-                        .WithMany()
+                        .WithMany("Departures")
                         .HasForeignKey("DepartureStationId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("bike_webapi.Models.Station", "ReturnStation")
-                        .WithMany()
+                        .WithMany("Returns")
                         .HasForeignKey("ReturnStationId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -130,6 +127,13 @@ namespace bike_webapi.Migrations
                     b.Navigation("DepartureStation");
 
                     b.Navigation("ReturnStation");
+                });
+
+            modelBuilder.Entity("bike_webapi.Models.Station", b =>
+                {
+                    b.Navigation("Departures");
+
+                    b.Navigation("Returns");
                 });
 #pragma warning restore 612, 618
         }

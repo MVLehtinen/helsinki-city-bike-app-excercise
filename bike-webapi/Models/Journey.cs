@@ -9,7 +9,7 @@ namespace bike_webapi.Models
         public int ReturnStationId { get; set; }
         public int CoveredDistance { get; set; }
         public int Duration { get; set; }
-        public Station DepartureStation { get; set; }
-        public Station ReturnStation { get; set; }
+        public Station DepartureStation { get; set; } = null!;
+        public Station ReturnStation { get; set; } = null!;
     }
 }

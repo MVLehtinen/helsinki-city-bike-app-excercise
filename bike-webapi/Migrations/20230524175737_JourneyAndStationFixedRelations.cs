@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace bike_webapi.Migrations
 {
     /// <inheritdoc />
-    public partial class AddJourneyAndStationModels : Migration
+    public partial class JourneyAndStationFixedRelations : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -15,8 +15,7 @@ namespace bike_webapi.Migrations
                 name: "Stations",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Id = table.Column<int>(type: "int", nullable: false),
                     Nimi = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Namn = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Name = table.Column<string>(type: "nvarchar(max)", nullable: false),

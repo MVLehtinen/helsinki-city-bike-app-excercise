@@ -10,7 +10,26 @@ namespace bike_webapi.Data
 
         }
 
-        public DbSet<Journey> Journeys { get; set; }
-        public DbSet<Station> Stations { get; set; }
+        public DbSet<Journey> Journeys { get; set; } = null!;
+        public DbSet<Station> Stations { get; set; } = null!;
+
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            var stationModel = modelBuilder.Entity<Station>();
+
+            stationModel.Property(s => s.Id).ValueGeneratedNever();
+
+            var journeyModel = modelBuilder.Entity<Journey>();
+            
+            journeyModel
+                .HasOne(j => j.DepartureStation)
+                .WithMany(ds => ds.Departures)
+                .HasForeignKey(j => j.DepartureStationId);
+            
+            journeyModel
+                .HasOne(j => j.ReturnStation)
+                .WithMany(rs => rs.Returns)
+                .HasForeignKey(j => j.ReturnStationId);
+        }
     }
 }
