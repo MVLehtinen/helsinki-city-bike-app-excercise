@@ -1,4 +1,5 @@
 using Microsoft.EntityFrameworkCore;
+using System.Text.Json.Serialization;
 using bike_webapi.Data;
 using bike_webapi.Interfaces;
 using bike_webapi.Repositories;
@@ -8,7 +9,8 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 
-builder.Services.AddControllers();
+builder.Services.AddControllers().AddJsonOptions(x =>
+    x.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles);
 builder.Services.AddScoped<IStationRepository, StationRepository>();
 builder.Services.AddScoped<IJourneyRepository, JourneyRepository>();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
@@ -45,6 +47,7 @@ using (var scope = app.Services.CreateScope())
             {
                 new Station() 
                 { 
+                    Id = 5,
                     Nimi = "Jenkruutin asema",
                     Namn = "Jöngruds station",
                     Name = "Jonssons station",
@@ -59,6 +62,7 @@ using (var scope = app.Services.CreateScope())
                 },
                 new Station()
                 { 
+                    Id = 6,
                     Nimi = "Kahvila asema",
                     Namn = "kaffe station",
                     Name = "Cafe station",
@@ -84,8 +88,8 @@ using (var scope = app.Services.CreateScope())
                 {
                     Departure = new DateTime(),
                     Return = new DateTime(),
-                    DepartureStationId = 1,
-                    ReturnStationId = 2,
+                    DepartureStationId = 5,
+                    ReturnStationId = 6,
                     CoveredDistance = 8393,
                     Duration = 300
                 },
@@ -93,8 +97,8 @@ using (var scope = app.Services.CreateScope())
                 {
                     Departure = new DateTime(),
                     Return = new DateTime(),
-                    DepartureStationId = 2,
-                    ReturnStationId = 1,
+                    DepartureStationId = 6,
+                    ReturnStationId = 5,
                     CoveredDistance = 3835,
                     Duration = 120
                 }

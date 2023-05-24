@@ -1,3 +1,4 @@
+using Microsoft.EntityFrameworkCore;
 using bike_webapi.Models;
 using bike_webapi.Interfaces;
 using bike_webapi.Data;
@@ -15,7 +16,10 @@ namespace bike_webapi.Repositories
 
         public ICollection<Journey> GetJourneys()
         {
-            return _context.Journeys.ToList();
+            return _context.Journeys
+            .Include(j => j.DepartureStation)
+            .Include(j => j.ReturnStation)
+            .ToList();
         }
     }
 }
