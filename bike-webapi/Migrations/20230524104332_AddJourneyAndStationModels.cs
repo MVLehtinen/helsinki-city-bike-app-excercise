@@ -55,13 +55,13 @@ namespace bike_webapi.Migrations
                         column: x => x.DepartureStationId,
                         principalTable: "Stations",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.NoAction);
                     table.ForeignKey(
                         name: "FK_Journeys_Stations_ReturnStationId",
                         column: x => x.ReturnStationId,
                         principalTable: "Stations",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.NoAction);
                 });
 
             migrationBuilder.CreateIndex(
