@@ -21,9 +21,9 @@ namespace bike_webapi.Controllers
         }
 
         [HttpGet]
-        public IActionResult GetStations([FromQuery]int pageSize = 10, [FromQuery]int page = 1)
+        public IActionResult GetStations([FromQuery]int pageSize = 10, [FromQuery]int page = 1, [FromQuery]string? search = "")
         {
-            var stations = _stationRepository.GetStations(pageSize, page);
+            var stations = _stationRepository.GetStations(pageSize, page, search);
 
             var mappedPages = new PagedResult<StationDto>()
                 {
@@ -32,6 +32,24 @@ namespace bike_webapi.Controllers
                 };
 
             return Ok(mappedPages);
+        }
+
+        [HttpGet("{id}")]
+        public IActionResult GetStation(int id)
+        {
+            var station = _stationRepository.GetStation(id);
+
+            if (station == null)
+            {
+                return NotFound();
+            }
+
+            var mapped = _mapper.Map<StationDetailsDto>(station);
+
+            mapped.Top5Destinations = _mapper.Map<List<StationDto>>(_stationRepository.GetTop5Destinations(id));
+            mapped.Top5Origins = _mapper.Map<List<StationDto>>(_stationRepository.GetTop5Origins(id));
+
+            return Ok(mapped);
         }
     }
 }
