@@ -21,14 +21,17 @@ namespace bike_webapi.Controllers
         }
 
         [HttpGet]
-        public IActionResult GetStations(
+        public IActionResult GetJourneys(
             [FromQuery]int pageSize = 10, 
             [FromQuery]int page = 1, 
             [FromQuery]string? orderBy = "",
-            [FromQuery]string? search = ""
+            [FromQuery]string? search = "",
+            [FromQuery]int departureStationId = 0,
+            [FromQuery]int returnStationId = 0,
+            [FromQuery]int month = 0
             )
         {
-            var journeys = _journeyRepository.GetJourneys(pageSize, page, orderBy, search);
+            var journeys = _journeyRepository.GetJourneys(pageSize, page, orderBy, search, departureStationId, returnStationId, month);
 
             var mappedPages = new PagedResult<JourneyDto>()
                 {

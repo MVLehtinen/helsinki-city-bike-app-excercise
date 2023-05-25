@@ -15,11 +15,33 @@ namespace bike_webapi.Repositories
             _context = context;
         }
 
-        public PagedResult<Journey> GetJourneys(int pageSize, int page, string orderBy, string search)
+        public PagedResult<Journey> GetJourneys(
+            int pageSize,
+            int page, 
+            string? orderBy, 
+            string? search,
+            int departureStationId,
+            int returnStationId,
+            int month)
         {
             IQueryable<Journey> journeys =  _context.Journeys
                 .Include(j => j.DepartureStation)
                 .Include(j => j.ReturnStation);
+
+            if (month > 0 && month <= 12)
+            {
+                journeys = journeys.Where(j => j.Departure.Month == month);
+            }
+
+            if (departureStationId > 0)
+            {
+                journeys = journeys.Where(j => j.DepartureStationId == departureStationId);
+            }
+
+            if (returnStationId > 0)
+            {
+                journeys = journeys.Where(j => j.ReturnStationId == returnStationId);
+            }
 
             if (!String.IsNullOrWhiteSpace(search))
             {
@@ -100,7 +122,7 @@ namespace bike_webapi.Repositories
                 .Skip(pageSize*(page - 1))
                 .Take(pageSize);
             
-            var total = _context.Journeys.Count();
+            var total = journeys.Count();
 
             return new PagedResult<Journey>() { Total = total, Result = journeys.ToList() };
         }
