@@ -1,6 +1,8 @@
+using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using bike_webapi.Models;
 using bike_webapi.Interfaces;
+using bike_webapi.Dto;
 
 namespace bike_webapi.Controllers
 {
@@ -9,10 +11,12 @@ namespace bike_webapi.Controllers
     public class StationsController : ControllerBase
     {
         private IStationRepository _stationRepository;
+        private IMapper _mapper;
 
-        public StationsController(IStationRepository stationRepository)
+        public StationsController(IStationRepository stationRepository, IMapper mapper)
         {
             _stationRepository = stationRepository;
+            _mapper = mapper;
         }
 
         [HttpGet]
@@ -20,7 +24,7 @@ namespace bike_webapi.Controllers
         {
             var stations = _stationRepository.GetStations();
 
-            return Ok(stations);
+            return Ok(_mapper.Map<List<StationDto>>(stations));
         }
     }
 }
