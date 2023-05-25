@@ -2,6 +2,7 @@ using Microsoft.EntityFrameworkCore;
 using bike_webapi.Models;
 using bike_webapi.Interfaces;
 using bike_webapi.Data;
+using bike_webapi.Helpers;
 
 namespace bike_webapi.Repositories
 {
@@ -14,12 +15,18 @@ namespace bike_webapi.Repositories
             _context = context;
         }
 
-        public ICollection<Station> GetStations()
+        public PagedResult<Station> GetStations(int pageSize, int page)
         {
-            return _context.Stations
+            var stations = _context.Stations
                 .Include(s => s.Departures)
                 .Include(s => s.Returns)
+                .Skip(pageSize*(page - 1))
+                .Take(pageSize)
                 .ToList();
+            
+            var total = _context.Stations.Count();
+
+            return new PagedResult<Station>() { Result = stations, Total = total };
         }
     }
 }

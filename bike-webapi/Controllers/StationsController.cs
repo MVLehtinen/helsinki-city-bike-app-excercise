@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using bike_webapi.Models;
 using bike_webapi.Interfaces;
 using bike_webapi.Dto;
+using bike_webapi.Helpers;
 
 namespace bike_webapi.Controllers
 {
@@ -20,11 +21,17 @@ namespace bike_webapi.Controllers
         }
 
         [HttpGet]
-        public IActionResult GetStations()
+        public IActionResult GetStations([FromQuery]int pageSize = 10, [FromQuery]int page = 1)
         {
-            var stations = _stationRepository.GetStations();
+            var stations = _stationRepository.GetStations(pageSize, page);
 
-            return Ok(_mapper.Map<List<StationDto>>(stations));
+            var mappedPages = new PagedResult<StationDto>()
+                {
+                    Result = _mapper.Map<List<StationDto>>(stations.Result),
+                    Total = stations.Total
+                };
+
+            return Ok(mappedPages);
         }
     }
 }

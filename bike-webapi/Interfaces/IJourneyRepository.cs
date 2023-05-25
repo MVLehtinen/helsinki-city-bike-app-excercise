@@ -1,9 +1,10 @@
 using bike_webapi.Models;
+using bike_webapi.Helpers;
 
 namespace bike_webapi.Interfaces
 {
     public interface IJourneyRepository
     {
-        ICollection<Journey> GetJourneys();
+        PagedResult<Journey> GetJourneys(int pageSize, int page);
     }
 }

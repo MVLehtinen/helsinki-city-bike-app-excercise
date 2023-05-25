@@ -1,9 +1,10 @@
 using bike_webapi.Models;
+using bike_webapi.Helpers;
 
 namespace bike_webapi.Interfaces
 {
     public interface IStationRepository
     {
-        ICollection<Station> GetStations();
+        PagedResult<Station> GetStations(int pageSize, int page);
     }
 }
