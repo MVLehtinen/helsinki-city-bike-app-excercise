@@ -5,6 +5,6 @@ namespace bike_webapi.Interfaces
 {
     public interface IJourneyRepository
     {
-        PagedResult<Journey> GetJourneys(int pageSize, int page, string orderBy);
+        PagedResult<Journey> GetJourneys(int pageSize, int page, string orderBy, string search);
     }
 }

@@ -15,13 +15,32 @@ namespace bike_webapi.Repositories
             _context = context;
         }
 
-        public PagedResult<Journey> GetJourneys(int pageSize, int page, string orderBy)
+        public PagedResult<Journey> GetJourneys(int pageSize, int page, string orderBy, string search)
         {
             IQueryable<Journey> journeys =  _context.Journeys
                 .Include(j => j.DepartureStation)
                 .Include(j => j.ReturnStation);
 
-
+            if (!String.IsNullOrWhiteSpace(search))
+            {
+                journeys = journeys.Where(j => 
+                    j.DepartureStation.Name.Contains(search) ||
+                    j.DepartureStation.Namn.Contains(search) ||
+                    j.DepartureStation.Nimi.Contains(search) ||
+                    j.DepartureStation.Osoite.Contains(search) ||
+                    j.DepartureStation.Adress.Contains(search) ||
+                    j.DepartureStation.Stad.Contains(search) ||
+                    j.DepartureStation.Kaupunki.Contains(search) ||
+                    j.ReturnStation.Name.Contains(search) ||
+                    j.ReturnStation.Namn.Contains(search) ||
+                    j.ReturnStation.Nimi.Contains(search) ||
+                    j.ReturnStation.Osoite.Contains(search) ||
+                    j.ReturnStation.Adress.Contains(search) ||
+                    j.ReturnStation.Stad.Contains(search) ||
+                    j.ReturnStation.Kaupunki.Contains(search)
+                );
+            }
+            
             switch(orderBy)
             {
                 case "departureAscending":
