@@ -2,6 +2,7 @@ using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using bike_webapi.Interfaces;
 using bike_webapi.Dto;
+using bike_webapi.Models;
 
 namespace bike_webapi.Controllers
 {
@@ -57,6 +58,38 @@ namespace bike_webapi.Controllers
             details.Top5Origins = _mapper.Map<List<CountedResultDto<StationDto>>>(_stationRepository.GetTop5Origins(id, month));
 
             return Ok(details);
+        }
+
+        [HttpPost]
+        public IActionResult CreateStation([FromBody]StationDto stationDto)
+        {
+            if (stationDto == null)
+            {
+                return BadRequest();
+            }
+
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            var station = _stationRepository.GetStation(stationDto.Id);
+
+            if (station != null)
+            {
+                return Conflict("Station ID already exists");
+            }
+
+            var newStation = _mapper.Map<Station>(stationDto);
+
+            if (!_stationRepository.AddStation(newStation))
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError);
+            }
+
+            return Ok(newStation);
+
+
         }
     }
 }

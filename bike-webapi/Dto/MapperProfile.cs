@@ -14,6 +14,8 @@ namespace bike_webapi.Dto
             CreateMap<CountedResultDto<Station>, CountedResultDto<StationDto>>();
             CreateMap<PagedResultDto<Station>, PagedResultDto<StationDto>>();
             CreateMap<PagedResultDto<Journey>, PagedResultDto<JourneyDto>>();
+            CreateMap<StationDto, Station>();
+            CreateMap<JourneyDto, Journey>();
         }
     }
 }

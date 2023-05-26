@@ -15,6 +15,13 @@ namespace bike_webapi.Repositories
             _context = context;
         }
 
+        public bool AddJourney(Journey journey)
+        {
+            _context.Add(journey);
+
+            return _context.SaveChanges() > 0;
+        }
+
         public PagedResultDto<Journey> GetJourneys(
             int pageSize,
             int page, 

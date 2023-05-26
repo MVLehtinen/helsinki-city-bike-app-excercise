@@ -41,7 +41,7 @@ namespace bike_webapi.Repositories
             return new PagedResultDto<Station>() { Result = stations.ToList(), Total = total };
         }
 
-        public Station GetStation(int id)
+        public Station? GetStation(int id)
         {
             var station = _context.Stations
             .Where(s => s.Id == id)
@@ -141,6 +141,13 @@ namespace bike_webapi.Repositories
                     TotalDepartures = totalDepartures,
                     TotalReturns = totalReturns
                 };
+        }
+
+        public bool AddStation(Station station)
+        {
+            _context.Add(station);
+
+            return _context.SaveChanges() > 0;
         }
     }
 }

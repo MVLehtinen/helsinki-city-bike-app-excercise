@@ -13,5 +13,7 @@ namespace bike_webapi.Interfaces
             int departureStationId,
             int returnStationId,
             int month);
+        
+        bool AddJourney(Journey journey);
     }
 }

@@ -2,6 +2,7 @@ using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using bike_webapi.Interfaces;
 using bike_webapi.Dto;
+using bike_webapi.Models;
 
 namespace bike_webapi.Controllers
 {
@@ -34,6 +35,29 @@ namespace bike_webapi.Controllers
             var mappedPages = _mapper.Map<PagedResultDto<JourneyDto>>(journeys);
 
             return Ok(mappedPages);
+        }
+
+        [HttpPost]
+        public IActionResult CreateJourney([FromBody]JourneyDto journeDto)
+        {
+            if (journeDto == null)
+            {
+                return BadRequest();
+            }
+
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            var newJourney = _mapper.Map<Journey>(journeDto);
+
+            if (!_journeyRepository.AddJourney(newJourney))
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError);
+            }
+
+            return Ok(newJourney);
         }
     }
 }
