@@ -1,9 +1,7 @@
 using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
-using bike_webapi.Models;
 using bike_webapi.Interfaces;
 using bike_webapi.Dto;
-using bike_webapi.Helpers;
 
 namespace bike_webapi.Controllers
 {
@@ -25,11 +23,7 @@ namespace bike_webapi.Controllers
         {
             var stations = _stationRepository.GetStations(pageSize, page, search);
 
-            var mappedPages = new PagedResult<StationDto>()
-                {
-                    Result = _mapper.Map<List<StationDto>>(stations.Result),
-                    Total = stations.Total
-                };
+            var mappedPages = _mapper.Map<PagedResultDto<StationDto>>(stations);
 
             return Ok(mappedPages);
         }

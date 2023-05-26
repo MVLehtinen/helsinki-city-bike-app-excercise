@@ -2,7 +2,7 @@ using Microsoft.EntityFrameworkCore;
 using bike_webapi.Models;
 using bike_webapi.Interfaces;
 using bike_webapi.Data;
-using bike_webapi.Helpers;
+using bike_webapi.Dto;
 
 namespace bike_webapi.Repositories
 {
@@ -15,7 +15,7 @@ namespace bike_webapi.Repositories
             _context = context;
         }
 
-        public PagedResult<Journey> GetJourneys(
+        public PagedResultDto<Journey> GetJourneys(
             int pageSize,
             int page, 
             string? orderBy, 
@@ -124,7 +124,7 @@ namespace bike_webapi.Repositories
             
             var total = journeys.Count();
 
-            return new PagedResult<Journey>() { Total = total, Result = journeys.ToList() };
+            return new PagedResultDto<Journey>() { Total = total, Result = journeys.ToList() };
         }
     }
 }

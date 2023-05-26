@@ -1,11 +1,11 @@
 using bike_webapi.Models;
-using bike_webapi.Helpers;
+using bike_webapi.Dto;
 
 namespace bike_webapi.Interfaces
 {
     public interface IJourneyRepository
     {
-        PagedResult<Journey> GetJourneys(
+        PagedResultDto<Journey> GetJourneys(
             int pageSize, 
             int page, 
             string? orderBy, 

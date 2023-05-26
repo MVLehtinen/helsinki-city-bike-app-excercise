@@ -1,7 +1,7 @@
 
-namespace bike_webapi.Helpers
+namespace bike_webapi.Dto
 {
-    public class PagedResult<T>
+    public class PagedResultDto<T>
     {
         public int Total { get; set; }
         public List<T> Result { get; set; } = null!;

@@ -2,7 +2,6 @@ using Microsoft.EntityFrameworkCore;
 using bike_webapi.Models;
 using bike_webapi.Interfaces;
 using bike_webapi.Data;
-using bike_webapi.Helpers;
 using bike_webapi.Dto;
 
 namespace bike_webapi.Repositories
@@ -16,7 +15,7 @@ namespace bike_webapi.Repositories
             _context = context;
         }
 
-        public PagedResult<Station> GetStations(int pageSize, int page, string? search)
+        public PagedResultDto<Station> GetStations(int pageSize, int page, string? search)
         {
             IQueryable<Station> stations = _context.Stations;
 
@@ -39,7 +38,7 @@ namespace bike_webapi.Repositories
             
             var total = _context.Stations.Count();
 
-            return new PagedResult<Station>() { Result = stations.ToList(), Total = total };
+            return new PagedResultDto<Station>() { Result = stations.ToList(), Total = total };
         }
 
         public Station GetStation(int id)

@@ -12,6 +12,8 @@ namespace bike_webapi.Dto
                 .ForMember(d => d.ReturnStationName, o => o.MapFrom(s => s.ReturnStation.Nimi));
             CreateMap<Station, StationDto>();
             CreateMap<CountedResultDto<Station>, CountedResultDto<StationDto>>();
+            CreateMap<PagedResultDto<Station>, PagedResultDto<StationDto>>();
+            CreateMap<PagedResultDto<Journey>, PagedResultDto<JourneyDto>>();
         }
     }
 }
