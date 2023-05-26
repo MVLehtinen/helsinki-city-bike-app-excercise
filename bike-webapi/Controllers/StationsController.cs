@@ -44,12 +44,25 @@ namespace bike_webapi.Controllers
                 return NotFound();
             }
 
-            var mapped = _mapper.Map<StationDetailsDto>(station);
+            return Ok(_mapper.Map<StationDto>(station));
+        }
 
-            mapped.Top5Destinations = _mapper.Map<List<StationDto>>(_stationRepository.GetTop5Destinations(id));
-            mapped.Top5Origins = _mapper.Map<List<StationDto>>(_stationRepository.GetTop5Origins(id));
+        [HttpGet("{id}/details")]
+        public IActionResult GetStationDetails(int id, [FromQuery]int month)
+        {
+            var station = _stationRepository.GetStation(id);
 
-            return Ok(mapped);
+            if (station == null)
+            {
+                return NotFound();
+            }
+
+            var details = _stationRepository.GetDetails(id, month);
+
+            details.Top5Destinations = _mapper.Map<List<CountedResultDto<StationDto>>>(_stationRepository.GetTop5Destinations(id, month));
+            details.Top5Origins = _mapper.Map<List<CountedResultDto<StationDto>>>(_stationRepository.GetTop5Origins(id, month));
+
+            return Ok(details);
         }
     }
 }

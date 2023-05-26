@@ -3,6 +3,7 @@ using bike_webapi.Models;
 using bike_webapi.Interfaces;
 using bike_webapi.Data;
 using bike_webapi.Helpers;
+using bike_webapi.Dto;
 
 namespace bike_webapi.Repositories
 {
@@ -44,18 +45,22 @@ namespace bike_webapi.Repositories
         public Station GetStation(int id)
         {
             var station = _context.Stations
-            .Include(s => s.Departures)
-            .Include(s => s.Returns)
             .Where(s => s.Id == id)
             .FirstOrDefault();
 
             return station;
         }
 
-        public ICollection<Station> GetTop5Destinations(int id)
+        public ICollection<CountedResultDto<Station>> GetTop5Destinations(int id, int month)
         {
-            var top5Ids = _context.Journeys
-                .Where(j => j.DepartureStationId == id)
+            var journeys = _context.Journeys.Where(j => j.DepartureStationId == id);
+
+            if (month > 0 && month <= 12)
+            {
+                journeys = journeys.Where(j => j.Departure.Month == month);
+            }
+            
+            var top5Ids = journeys
                 .GroupBy(j => j.ReturnStationId)
                 .Select(g => new { Id = g.Key, Count = g.Count() })
                 .OrderByDescending(g => g.Count)
@@ -68,13 +73,28 @@ namespace bike_webapi.Repositories
                 .OrderBy(s => top5Ids.FindIndex(t => t.Id == s.Id))
                 .ToList();
             
-            return topStations;
+            var topStationsWithCount = topStations.Select((s, i) => 
+                new CountedResultDto<Station>()
+                    {
+                        Total = top5Ids[i].Count,
+                        Item = s
+                    }
+                )
+                .ToList();
+
+            return topStationsWithCount;
         }
 
-        public ICollection<Station> GetTop5Origins(int id)
+        public ICollection<CountedResultDto<Station>> GetTop5Origins(int id, int month)
         {
-            var top5Ids = _context.Journeys
-                .Where(j => j.ReturnStationId == id)
+            var journeys = _context.Journeys.Where(j => j.ReturnStationId == id);
+
+            if (month > 0 && month <= 12)
+            {
+                journeys = journeys.Where(j => j.Departure.Month == month);
+            }
+
+            var top5Ids = journeys
                 .GroupBy(j => j.DepartureStationId)
                 .Select(g => new { Id = g.Key, Count = g.Count() })
                 .OrderByDescending(g => g.Count)
@@ -87,7 +107,41 @@ namespace bike_webapi.Repositories
                 .OrderBy(s => top5Ids.FindIndex(t => t.Id == s.Id))
                 .ToList();
             
-            return topStations;
+            var topStationsWithCount = topStations.Select((s, i) => 
+                new CountedResultDto<Station>()
+                    {
+                        Total = top5Ids[i].Count,
+                        Item = s
+                    }
+                )
+                .ToList();
+
+            return topStationsWithCount;
+        }
+
+        public StationDetailsDto GetDetails(int id, int month)
+        {
+            var departures = _context.Journeys.Where(j => j.DepartureStationId == id);
+            var returns = _context.Journeys.Where(j => j.ReturnStationId == id);
+
+            if (month > 0 && month <= 12)
+            {
+                departures = departures.Where(j => j.Departure.Month == month);
+                returns = returns.Where(j => j.Departure.Month == month);
+            }
+
+            var averageDistanceOfDeparture = departures.Average(j => j.CoveredDistance);
+            var averageDistanceOfReturn = returns.Average(j => j.CoveredDistance);
+            var totalDepartures = departures.Count();
+            var totalReturns = returns.Count();
+
+            return new StationDetailsDto()
+                {
+                    AverageDistanceOfDeparture = averageDistanceOfDeparture,
+                    AverageDistanceOfReturn = averageDistanceOfReturn,
+                    TotalDepartures = totalDepartures,
+                    TotalReturns = totalReturns
+                };
         }
     }
 }
