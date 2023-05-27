@@ -32,11 +32,12 @@ namespace bike_webapi.Repositories
                 );
             }
 
+            var total = stations.Count();
+
             stations = stations
                 .Skip(pageSize*(page - 1))
                 .Take(pageSize);
             
-            var total = _context.Stations.Count();
 
             return new PagedResultDto<Station>() { Result = stations.ToList(), Total = total };
         }

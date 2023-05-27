@@ -124,13 +124,13 @@ namespace bike_webapi.Repositories
                     journeys = journeys.OrderBy(j => j.Departure);
                     break;
             }
+
+            var total = journeys.Count();
             
             journeys = journeys
                 .Skip(pageSize*(page - 1))
                 .Take(pageSize);
             
-            var total = journeys.Count();
-
             return new PagedResultDto<Journey>() { Total = total, Result = journeys.ToList() };
         }
     }
