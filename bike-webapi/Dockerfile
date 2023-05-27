@@ -14,6 +14,6 @@ RUN dotnet publish "bike-webapi.csproj" -c Release -o /app
 
 FROM base AS final
 WORKDIR /app
-
+COPY "*.csv" ./
 COPY --from=publish /app .
 ENTRYPOINT ["dotnet", "bike-webapi.dll"]

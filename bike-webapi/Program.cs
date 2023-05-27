@@ -3,7 +3,8 @@ using System.Text.Json.Serialization;
 using bike_webapi.Data;
 using bike_webapi.Interfaces;
 using bike_webapi.Repositories;
-using bike_webapi.Models;
+using bike_webapi.Helpers;
+using CsvHelper;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -41,71 +42,17 @@ using (var scope = app.Services.CreateScope())
 
     context.Database.Migrate();
 
+    var dbSeeder = new DatabaseSeeder(context);
+
     if (!context.Stations.Any())
-    {
-        context.Stations.AddRange(
-            new List<Station>()
-            {
-                new Station() 
-                { 
-                    Id = 5,
-                    Nimi = "Jenkruutin asema",
-                    Namn = "Jöngruds station",
-                    Name = "Jonssons station",
-                    Osoite = "Blabla 1",
-                    Adress = "Blabla 1",
-                    Kaupunki = "Tsadi",
-                    Stad = "Tsad",
-                    Operaattori = "Veikko Kilkenblad Oy",
-                    Kapasiteetti = 5,
-                    X = 99.4,
-                    Y = 99.9
-                },
-                new Station()
-                { 
-                    Id = 6,
-                    Nimi = "Kahvila asema",
-                    Namn = "kaffe station",
-                    Name = "Cafe station",
-                    Osoite = "Önsrötinkatu 1",
-                    Adress = "Önsrötsgatan 1",
-                    Kaupunki = "Epsoo",
-                    Stad = "Epsoo",
-                    Operaattori = "Veikko Kilkenblad Oy",
-                    Kapasiteetti = 5,
-                    X = 99.4,
-                    Y = 99.9
-                }
-            }
-        );
-        context.SaveChanges();
+    {    
+        dbSeeder.AddStationsFromCSV("Helsingin_ja_Espoon_kaupunkipyöräasemat_avoin.csv");
     }
     if (!context.Journeys.Any())
     {
-        context.Journeys.AddRange(
-            new List<Journey>()
-            {
-                new Journey()
-                {
-                    Departure = new DateTime(),
-                    Return = new DateTime(),
-                    DepartureStationId = 5,
-                    ReturnStationId = 6,
-                    CoveredDistance = 8393,
-                    Duration = 300
-                },
-                new Journey()
-                {
-                    Departure = new DateTime(),
-                    Return = new DateTime(),
-                    DepartureStationId = 6,
-                    ReturnStationId = 5,
-                    CoveredDistance = 3835,
-                    Duration = 120
-                }
-            }
-        );
-        context.SaveChanges();
+        dbSeeder.AddJourneysFromCSV("2021-05.csv");
+        dbSeeder.AddJourneysFromCSV("2021-06.csv");
+        dbSeeder.AddJourneysFromCSV("2021-07.csv");
     }
     
 }
