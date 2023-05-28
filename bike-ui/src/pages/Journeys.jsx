@@ -10,6 +10,13 @@ import {
   TablePagination,
   TableFooter,
   TableSortLabel,
+  TextField,
+  Button,
+  FormControl,
+  InputLabel,
+  Select,
+  Grid,
+  MenuItem,
 } from "@mui/material";
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
@@ -21,6 +28,8 @@ function Journeys() {
   const [pageSize, setPageSize] = useState(10);
   const [orderBy, setOrderBy] = useState("");
   const [order, setOrder] = useState("asc");
+  const [search, setSearch] = useState("");
+  const [month, setMonth] = useState(0);
 
   function constructQueryString() {
     let query = `?page=${page}&pageSize=${pageSize}`;
@@ -29,6 +38,8 @@ function Journeys() {
         order === "asc" ? "Ascending" : "Descending"
       }`;
     }
+    if (search !== null && search.trim() !== "") query += `&search=${search}`;
+    if (month !== 0) query += `&month=${month}`;
     return query;
   }
 
@@ -58,7 +69,7 @@ function Journeys() {
 
   useEffect(() => {
     getJourneys();
-  }, [page, pageSize, orderBy, order]);
+  }, [page, pageSize, orderBy, order, month]);
 
   const SortLabel = (props) => (
     <TableSortLabel
@@ -79,6 +90,36 @@ function Journeys() {
       <Typography variant="h4" sx={{ mb: 5, mt: 5 }}>
         Journeys
       </Typography>
+      <Grid container spacing={3}>
+        <Grid item xs={4}>
+          <TextField
+            size="small"
+            sx={{ mb: 3 }}
+            label="Search"
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+          />
+          <Button sx={{ ml: 1 }} variant="contained" onClick={getJourneys}>
+            Search
+          </Button>
+        </Grid>
+        <Grid item xs={4}>
+          <FormControl>
+            <InputLabel>Month</InputLabel>
+            <Select
+              label="Month"
+              size="small"
+              value={month}
+              onChange={(e) => setMonth(e.target.value)}
+            >
+              <MenuItem value={0}>All</MenuItem>
+              <MenuItem value={5}>May</MenuItem>
+              <MenuItem value={6}>June</MenuItem>
+              <MenuItem value={7}>July</MenuItem>
+            </Select>
+          </FormControl>
+        </Grid>
+      </Grid>
       <TableContainer component={Paper}>
         <Table size="small">
           <TableHead>
