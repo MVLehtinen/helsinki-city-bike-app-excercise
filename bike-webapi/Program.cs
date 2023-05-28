@@ -18,7 +18,7 @@ builder.Services.AddScoped<IJourneyRepository, JourneyRepository>();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
-builder.Services.AddDbContext<AppDbContext>(options => 
+builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("Default")));
 
 var app = builder.Build();
@@ -31,6 +31,11 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+
+app.UseCors(x => x
+    .AllowAnyMethod()
+    .AllowAnyHeader()
+    .AllowAnyOrigin());
 
 app.UseAuthorization();
 
@@ -45,7 +50,7 @@ using (var scope = app.Services.CreateScope())
     var dbSeeder = new DatabaseSeeder(context);
 
     if (!context.Stations.Any())
-    {    
+    {
         dbSeeder.AddStationsFromCSV("Helsingin_ja_Espoon_kaupunkipyöräasemat_avoin.csv");
     }
     if (!context.Journeys.Any())
@@ -54,7 +59,7 @@ using (var scope = app.Services.CreateScope())
         dbSeeder.AddJourneysFromCSV("2021-06.csv");
         dbSeeder.AddJourneysFromCSV("2021-07.csv");
     }
-    
+
 }
 
 app.Run();
