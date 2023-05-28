@@ -44,6 +44,7 @@ function Journeys() {
 
   function handleRowsPerPageChange(e) {
     setPageSize(parseInt(e.target.value));
+    setPage(1);
   }
 
   useEffect(() => {
