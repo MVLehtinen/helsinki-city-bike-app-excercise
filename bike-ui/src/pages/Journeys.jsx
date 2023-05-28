@@ -69,9 +69,8 @@ function Journeys() {
             </TableRow>
           </TableHead>
           <TableBody>
-            {journeys ? (
-              <>
-                {journeys.map((j) => (
+            {journeys
+              ? journeys.map((j) => (
                   <TableRow key={j.id}>
                     <TableCell>{getPrettyDateString(j.departure)}</TableCell>
                     <TableCell>{getPrettyDateString(j.return)}</TableCell>
@@ -80,9 +79,8 @@ function Journeys() {
                     <TableCell>{j.coveredDistance} m</TableCell>
                     <TableCell>{j.duration}</TableCell>
                   </TableRow>
-                ))}
-              </>
-            ) : null}
+                ))
+              : null}
           </TableBody>
           <TableFooter>
             <TableRow>
