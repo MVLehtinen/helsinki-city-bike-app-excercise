@@ -67,7 +67,7 @@ function Stations() {
           <TableBody>
             {stations
               ? stations.map((s) => (
-                  <TableRow>
+                  <TableRow key={s.id}>
                     <TableCell>{s.nimi}</TableCell>
                     <TableCell>{s.namn}</TableCell>
                     <TableCell>{s.osoite}</TableCell>

@@ -66,13 +66,17 @@ function Station() {
           <Typography>Top 5 Destinations</Typography>
           <Box sx={{ ml: 2 }}>
             {stationDetails.top5Destinations.map((d, i) => (
-              <Typography>{`${i + 1}. ${d.item.nimi}, ${d.total}`}</Typography>
+              <Typography key={i}>{`${i + 1}. ${d.item.nimi}, ${
+                d.total
+              }`}</Typography>
             ))}
           </Box>
           <Typography>Top 5 Origins</Typography>
           <Box sx={{ ml: 2 }}>
             {stationDetails.top5Origins.map((d, i) => (
-              <Typography>{`${i + 1}. ${d.item.nimi}, ${d.total}`}</Typography>
+              <Typography key={i}>{`${i + 1}. ${d.item.nimi}, ${
+                d.total
+              }`}</Typography>
             ))}
           </Box>
         </>
