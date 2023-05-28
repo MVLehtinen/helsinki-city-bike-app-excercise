@@ -9,6 +9,8 @@ import {
   TableBody,
   TablePagination,
   TableFooter,
+  TextField,
+  Button,
 } from "@mui/material";
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
@@ -18,9 +20,11 @@ function Stations() {
   const [total, setTotal] = useState(0);
   const [page, setPage] = useState(1);
   const [pageSize, setPageSize] = useState(10);
+  const [search, setSearch] = useState("");
 
   function constructQueryString() {
     let query = `?page=${page}&pageSize=${pageSize}`;
+    if (search !== null && search.trim() !== "") query += `&search=${search}`;
     return query;
   }
 
@@ -43,6 +47,11 @@ function Stations() {
     setPage(1);
   }
 
+  function executeSearch() {
+    setPage(1);
+    getStations();
+  }
+
   useEffect(() => {
     getStations();
   }, [page, pageSize]);
@@ -52,6 +61,17 @@ function Stations() {
       <Typography variant="h4" sx={{ mb: 5, mt: 5 }}>
         Stations
       </Typography>
+
+      <TextField
+        size="small"
+        sx={{ mb: 3 }}
+        label="Search"
+        value={search}
+        onChange={(e) => setSearch(e.target.value)}
+      />
+      <Button sx={{ ml: 1 }} variant="contained" onClick={executeSearch}>
+        Search
+      </Button>
       <TableContainer component={Paper}>
         <Table size="small">
           <TableHead>
