@@ -1,4 +1,15 @@
-import { Box, Typography } from "@mui/material";
+import {
+  Box,
+  Typography,
+  Table,
+  TableRow,
+  TableCell,
+  Select,
+  MenuItem,
+  InputLabel,
+  FormControl,
+  Grid,
+} from "@mui/material";
 import { useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
 
@@ -7,23 +18,41 @@ function Station() {
 
   const [station, setStation] = useState(null);
   const [stationDetails, setStationDetails] = useState(null);
+  const [month, setMonth] = useState(0);
+
+  function createMonthQueryString() {
+    if (month == 0) return "";
+    return `?month=${month}`;
+  }
+
+  async function getStationDetails() {
+    const monthQuery = createMonthQueryString();
+    const stationDetailsResponse = await fetch(
+      "http://localhost:5000/api/stations/" + id + "/details" + monthQuery
+    );
+    const stationDetailsData = await stationDetailsResponse.json();
+    setStationDetails(stationDetailsData);
+  }
 
   async function getStation() {
     const stationResponse = await fetch(
       "http://localhost:5000/api/stations/" + id
     );
-    const stationDetailsResponse = await fetch(
-      "http://localhost:5000/api/stations/" + id + "/details"
-    );
     const stationData = await stationResponse.json();
-    const stationDetailsData = await stationDetailsResponse.json();
     setStation(stationData);
-    setStationDetails(stationDetailsData);
   }
 
   useEffect(() => {
     getStation();
   }, []);
+
+  useEffect(() => {
+    getStationDetails();
+  }, [month]);
+
+  function handleMonthChange(e) {
+    setMonth(e.target.value, getStationDetails);
+  }
 
   return (
     <>
@@ -41,29 +70,37 @@ function Station() {
           <Typography>Kaupunki: {station.kaupunki}</Typography>
           <Typography>Stad: {station.stad}</Typography>
           <Typography>Operaattori: {station.operaattori}</Typography>
-          <Typography>
-            Koordinaatit: X: {parseFloat(station.x).toFixed(4)}, Y:{" "}
-            {parseFloat(station.y).toFixed(4)}
-          </Typography>
+          <Typography>Koordinaatit:</Typography>
+          <Box sx={{ ml: 2 }}>
+            <Typography>X: {parseFloat(station.x).toFixed(4)}</Typography>
+            <Typography>Y: {parseFloat(station.y).toFixed(4)}</Typography>
+          </Box>
         </>
       ) : null}
+      <Grid container spacing={3} sx={{ mt: 1 }}>
+        <Grid item xs={2}>
+          <Typography variant="h6">Details</Typography>
+        </Grid>
+        <Grid item>
+          <FormControl>
+            <InputLabel>Month</InputLabel>
+            <Select
+              label="Month"
+              size="small"
+              value={month}
+              onChange={handleMonthChange}
+            >
+              <MenuItem value={0}>All</MenuItem>
+              <MenuItem value={5}>May</MenuItem>
+              <MenuItem value={6}>June</MenuItem>
+              <MenuItem value={7}>July</MenuItem>
+            </Select>
+          </FormControl>
+        </Grid>
+      </Grid>
       {stationDetails ? (
         <>
-          <Typography>
-            Average distance of departure:{" "}
-            {parseFloat(stationDetails.averageDistanceOfDeparture).toFixed(1)}{" "}
-            meters
-          </Typography>
-          <Typography>
-            Average distance of return:{" "}
-            {parseFloat(stationDetails.averageDistanceOfReturn).toFixed(1)}{" "}
-            meters
-          </Typography>
-          <Typography>
-            Total departures: {stationDetails.totalDepartures}
-          </Typography>
-          <Typography>Total returns: {stationDetails.totalReturns}</Typography>
-          <Typography>Top 5 Destinations</Typography>
+          <Typography sx={{ mt: 2 }}>Top 5 Destinations</Typography>
           <Box sx={{ ml: 2 }}>
             {stationDetails.top5Destinations.map((d, i) => (
               <Typography key={i}>{`${i + 1}. ${d.item.nimi}, ${
@@ -71,7 +108,7 @@ function Station() {
               }`}</Typography>
             ))}
           </Box>
-          <Typography>Top 5 Origins</Typography>
+          <Typography sx={{ mt: 2 }}>Top 5 Origins</Typography>
           <Box sx={{ ml: 2 }}>
             {stationDetails.top5Origins.map((d, i) => (
               <Typography key={i}>{`${i + 1}. ${d.item.nimi}, ${
@@ -79,6 +116,32 @@ function Station() {
               }`}</Typography>
             ))}
           </Box>
+          <Table sx={{ maxWidth: "500px", mt: 3 }} size="small">
+            <TableRow>
+              <TableCell>Average distance of departure:</TableCell>
+              <TableCell>
+                {parseFloat(stationDetails.averageDistanceOfDeparture).toFixed(
+                  1
+                )}{" "}
+                meters
+              </TableCell>
+            </TableRow>
+            <TableRow>
+              <TableCell>Average distance of return:</TableCell>
+              <TableCell>
+                {parseFloat(stationDetails.averageDistanceOfReturn).toFixed(1)}{" "}
+                meters
+              </TableCell>
+            </TableRow>
+            <TableRow>
+              <TableCell>Total departures:</TableCell>
+              <TableCell>{stationDetails.totalDepartures}</TableCell>
+            </TableRow>
+            <TableRow>
+              <TableCell>Total returns:</TableCell>
+              <TableCell>{stationDetails.totalReturns}</TableCell>
+            </TableRow>
+          </Table>
         </>
       ) : null}
     </>
