@@ -9,6 +9,7 @@ import {
   TableBody,
   TablePagination,
   TableFooter,
+  TableSortLabel,
 } from "@mui/material";
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
@@ -18,9 +19,16 @@ function Journeys() {
   const [total, setTotal] = useState(0);
   const [page, setPage] = useState(1);
   const [pageSize, setPageSize] = useState(10);
+  const [orderBy, setOrderBy] = useState("");
+  const [order, setOrder] = useState("asc");
 
   function constructQueryString() {
     let query = `?page=${page}&pageSize=${pageSize}`;
+    if (orderBy !== "") {
+      query += `&orderBy=${orderBy}${
+        order === "asc" ? "Ascending" : "Descending"
+      }`;
+    }
     return query;
   }
 
@@ -50,7 +58,21 @@ function Journeys() {
 
   useEffect(() => {
     getJourneys();
-  }, [page, pageSize]);
+  }, [page, pageSize, orderBy, order]);
+
+  const SortLabel = (props) => (
+    <TableSortLabel
+      active={orderBy === props.sortBy}
+      direction={orderBy === props.sortBy ? order : "asc"}
+      onClick={() => {
+        const isAsc = orderBy === props.sortBy && order === "asc";
+        setOrder(isAsc ? "desc" : "asc");
+        setOrderBy(props.sortBy);
+      }}
+    >
+      {props.children}
+    </TableSortLabel>
+  );
 
   return (
     <>
@@ -61,12 +83,26 @@ function Journeys() {
         <Table size="small">
           <TableHead>
             <TableRow>
-              <TableCell>Departure time</TableCell>
-              <TableCell>Return time</TableCell>
-              <TableCell>Departure station</TableCell>
-              <TableCell>Return station</TableCell>
-              <TableCell>Covered distance</TableCell>
-              <TableCell>Duration</TableCell>
+              <TableCell>
+                <SortLabel sortBy="departure">Departure time</SortLabel>
+              </TableCell>
+              <TableCell>
+                <SortLabel sortBy="return">Return time</SortLabel>
+              </TableCell>
+              <TableCell>
+                <SortLabel sortBy="departureStation">
+                  Departure station
+                </SortLabel>
+              </TableCell>
+              <TableCell>
+                <SortLabel sortBy="returnStation">Return station</SortLabel>
+              </TableCell>
+              <TableCell>
+                <SortLabel sortBy="distance">Covered distance</SortLabel>
+              </TableCell>
+              <TableCell>
+                <SortLabel sortBy="duration">Duration</SortLabel>
+              </TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
