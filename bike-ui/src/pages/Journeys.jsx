@@ -11,6 +11,7 @@ import {
   TableFooter,
 } from "@mui/material";
 import { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 
 function Journeys() {
   const [journeys, setJourneys] = useState(null);
@@ -74,8 +75,22 @@ function Journeys() {
                   <TableRow key={j.id}>
                     <TableCell>{getPrettyDateString(j.departure)}</TableCell>
                     <TableCell>{getPrettyDateString(j.return)}</TableCell>
-                    <TableCell>{j.departureStationName}</TableCell>
-                    <TableCell>{j.returnStationName}</TableCell>
+                    <TableCell>
+                      <Link
+                        style={{ textDecoration: "none" }}
+                        to={`/stations/${j.departureStationId}`}
+                      >
+                        {j.departureStationName}
+                      </Link>
+                    </TableCell>
+                    <TableCell>
+                      <Link
+                        style={{ textDecoration: "none" }}
+                        to={`/stations/${j.returnStationId}`}
+                      >
+                        {j.returnStationName}
+                      </Link>
+                    </TableCell>
                     <TableCell>{j.coveredDistance} m</TableCell>
                     <TableCell>{j.duration}</TableCell>
                   </TableRow>

@@ -11,6 +11,7 @@ import {
   TableFooter,
 } from "@mui/material";
 import { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 
 function Stations() {
   const [stations, setStations] = useState(null);
@@ -68,8 +69,22 @@ function Stations() {
             {stations
               ? stations.map((s) => (
                   <TableRow key={s.id}>
-                    <TableCell>{s.nimi}</TableCell>
-                    <TableCell>{s.namn}</TableCell>
+                    <TableCell>
+                      <Link
+                        to={`/stations/${s.id}`}
+                        style={{ textDecoration: "none" }}
+                      >
+                        {s.nimi}
+                      </Link>
+                    </TableCell>
+                    <TableCell>
+                      <Link
+                        to={`/stations/${s.id}`}
+                        style={{ textDecoration: "none" }}
+                      >
+                        {s.namn}
+                      </Link>
+                    </TableCell>
                     <TableCell>{s.osoite}</TableCell>
                     <TableCell>{s.adress}</TableCell>
                     <TableCell>{s.kaupunki}</TableCell>
