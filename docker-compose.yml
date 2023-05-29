@@ -18,3 +18,12 @@ services:
         environment:
             SA_PASSWORD: "S3cur3P@ssW0rd!"
             ACCEPT_EULA: "Y"
+
+    ui:
+      build:
+        context: ./bike-ui
+        dockerfile: Dockerfile
+      ports:
+        - 5173:5173
+      depends_on:
+        - api
