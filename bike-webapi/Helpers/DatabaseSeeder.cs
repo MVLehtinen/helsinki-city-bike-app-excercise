@@ -1,3 +1,4 @@
+using System.Diagnostics.CodeAnalysis;
 using bike_webapi.Data;
 using bike_webapi.Models;
 using CsvHelper;
@@ -13,7 +14,7 @@ namespace bike_webapi.Helpers
             _context = context;
         }
 
-        public void  AddStationsFromCSV(string filename)
+        public void AddStationsFromCSV(string filename)
         {
             using (var reader = new StreamReader(filename))
             using (var csv = new CsvReader(reader, System.Globalization.CultureInfo.InvariantCulture))
@@ -24,23 +25,23 @@ namespace bike_webapi.Helpers
 
                 while (csv.Read())
                 {
-                    try 
+                    try
                     {
                         var station = new Station()
-                            {
-                                Id = csv.GetField<int>(1),
-                                Nimi = csv.GetField<string>(2)!,
-                                Namn = csv.GetField<string>(3)!,
-                                Name = csv.GetField<string>(4)!,
-                                Osoite = csv.GetField<string>(5)!,
-                                Adress = csv.GetField<string>(6)!,
-                                Kaupunki = csv.GetField<string>(7)!,
-                                Stad = csv.GetField<string>(8)!,
-                                Operaattori = csv.GetField<string>(9),
-                                Kapasiteetti = csv.GetField<int>(10),
-                                X = csv.GetField<double>(11),
-                                Y = csv.GetField<double>(12)
-                            };
+                        {
+                            Id = csv.GetField<int>(1),
+                            Nimi = csv.GetField<string>(2)!,
+                            Namn = csv.GetField<string>(3)!,
+                            Name = csv.GetField<string>(4)!,
+                            Osoite = csv.GetField<string>(5)!,
+                            Adress = csv.GetField<string>(6)!,
+                            Kaupunki = csv.GetField<string>(7)!,
+                            Stad = csv.GetField<string>(8)!,
+                            Operaattori = csv.GetField<string>(9),
+                            Kapasiteetti = csv.GetField<int>(10),
+                            X = csv.GetField<double>(11),
+                            Y = csv.GetField<double>(12)
+                        };
                         stations.Add(station);
                     }
                     catch (Exception e)
@@ -55,7 +56,7 @@ namespace bike_webapi.Helpers
 
         public void AddJourneysFromCSV(string filename)
         {
-            HashSet<int> stationIds = _context.Stations.Select(s => s.Id).ToHashSet(); 
+            HashSet<int> stationIds = _context.Stations.Select(s => s.Id).ToHashSet();
             using (var reader = new StreamReader(filename))
             using (var csv = new CsvReader(reader, System.Globalization.CultureInfo.InvariantCulture))
             {
@@ -65,7 +66,7 @@ namespace bike_webapi.Helpers
 
                 while (csv.Read())
                 {
-                    try 
+                    try
                     {
                         var departureId = csv.GetField<int>(2);
                         var returnId = csv.GetField<int>(4);
@@ -80,15 +81,15 @@ namespace bike_webapi.Helpers
                             continue;
                         }
                         var journey = new Journey()
-                            {
-                                Departure = csv.GetField<DateTime>(0),
-                                Return = csv.GetField<DateTime>(1),
-                                DepartureStationId = departureId,
-                                ReturnStationId = returnId,
-                                CoveredDistance = coveredDistance,
-                                Duration = duration
-                            };
-                        
+                        {
+                            Departure = csv.GetField<DateTime>(0),
+                            Return = csv.GetField<DateTime>(1),
+                            DepartureStationId = departureId,
+                            ReturnStationId = returnId,
+                            CoveredDistance = coveredDistance,
+                            Duration = duration
+                        };
+
                         journeys.Add(journey);
                     }
                     catch (Exception e)
@@ -96,10 +97,29 @@ namespace bike_webapi.Helpers
                         System.Console.WriteLine(e.Message);
                     }
                 }
-
+                journeys = journeys.Distinct(new JourneyEqualityComparer()).ToList();
                 _context.AddRange(journeys);
                 _context.SaveChanges();
             }
+        }
+    }
+    class JourneyEqualityComparer : IEqualityComparer<Journey>
+    {
+        public bool Equals(Journey? x, Journey? y)
+        {
+            if (x.DepartureStationId != y.DepartureStationId) return false;
+            if (x.ReturnStationId != y.ReturnStationId) return false;
+            if (!x.Departure.Equals(y.Departure)) return false;
+            if (!x.Return.Equals(y.Return)) return false;
+            return true;
+        }
+
+        public int GetHashCode([DisallowNull] Journey obj)
+        {
+            return obj.Departure.GetHashCode()
+                ^ obj.Return.GetHashCode()
+                ^ obj.ReturnStationId.GetHashCode()
+                ^ obj.DepartureStationId.GetHashCode();
         }
     }
 }
