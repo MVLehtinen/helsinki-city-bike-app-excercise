@@ -107,6 +107,7 @@ namespace bike_webapi.Helpers
     {
         public bool Equals(Journey? x, Journey? y)
         {
+            if (x == null || y == null) return false;
             if (x.DepartureStationId != y.DepartureStationId) return false;
             if (x.ReturnStationId != y.ReturnStationId) return false;
             if (!x.Departure.Equals(y.Departure)) return false;
