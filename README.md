@@ -13,7 +13,7 @@ This is an excercise for Solita Dev Academy 2023
   - <https://dev.hsl.fi/citybikes/od-trips-2021/2021-07.csv>
   - <https://opendata.arcgis.com/datasets/726277c507ef4914b0aec3cbcfcbfafc_0.csv>
 
-The project was developed Ubuntu 23.04 and I haven't tested if it runs on Windows or other Linux distributions. So I would recommend Ubuntu for running this application
+The project was developed on Ubuntu 23.04 and I tested it on Fedora 38. Don't know if Windows will run into problems, but I would bet it runs on any machine that has a relatively recent version of docker and docker-compose.
 
 ## How to run
 
@@ -21,7 +21,7 @@ The project was developed Ubuntu 23.04 and I haven't tested if it runs on Window
 - In the project root run `docker-compose build`
 - Then `docker-compose up`
 
-The API will start reading the CSV files and inserts them in to the database on first run. This will take around 5 minutes, but on a slower machine might take a bit longer. After that the frontend should be running and serving on <http://localhost:5173>
+The API will start reading the CSV files and inserts them in to the database on first run. This will take around 5-10 minutes, but on a slower machine might take a bit longer. After that the frontend should be running and serving on <http://localhost:5173> and backend on <http://localhost:5000>
 
 ## Description
 
