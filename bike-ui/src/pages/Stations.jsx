@@ -11,6 +11,8 @@ import {
   TableFooter,
   TextField,
   Button,
+  LinearProgress,
+  Box,
 } from "@mui/material";
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
@@ -21,6 +23,7 @@ function Stations() {
   const [page, setPage] = useState(1);
   const [pageSize, setPageSize] = useState(10);
   const [search, setSearch] = useState("");
+  const [loading, setLoading] = useState(true);
 
   function constructQueryString() {
     let query = `?page=${page}&pageSize=${pageSize}`;
@@ -29,6 +32,7 @@ function Stations() {
   }
 
   async function getStations() {
+    setLoading(true);
     const queryString = constructQueryString();
     const response = await fetch(
       "http://localhost:5000/api/stations" + queryString
@@ -36,6 +40,7 @@ function Stations() {
     const data = await response.json();
     setStations(data.result);
     setTotal(data.total);
+    setLoading(false);
   }
 
   function handlePageChange(e, newPage) {
@@ -72,6 +77,11 @@ function Stations() {
       <Button sx={{ ml: 1 }} variant="contained" onClick={executeSearch}>
         Search
       </Button>
+      {loading ? (
+        <Box sx={{ width: "100%" }}>
+          <LinearProgress />
+        </Box>
+      ) : null}
       <TableContainer component={Paper}>
         <Table size="small">
           <TableHead>
@@ -86,7 +96,7 @@ function Stations() {
             </TableRow>
           </TableHead>
           <TableBody>
-            {stations
+            {stations && !loading
               ? stations.map((s) => (
                   <TableRow key={s.id}>
                     <TableCell>

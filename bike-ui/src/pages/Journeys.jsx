@@ -17,6 +17,8 @@ import {
   Select,
   Grid,
   MenuItem,
+  LinearProgress,
+  Box,
 } from "@mui/material";
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
@@ -30,6 +32,7 @@ function Journeys() {
   const [order, setOrder] = useState("asc");
   const [search, setSearch] = useState("");
   const [month, setMonth] = useState(0);
+  const [loading, setLoading] = useState(true);
 
   function constructQueryString() {
     let query = `?page=${page}&pageSize=${pageSize}`;
@@ -44,6 +47,7 @@ function Journeys() {
   }
 
   async function getJourneys() {
+    setLoading(true);
     const queryString = constructQueryString();
     const response = await fetch(
       "http://localhost:5000/api/journeys" + queryString
@@ -51,6 +55,7 @@ function Journeys() {
     const data = await response.json();
     setJourneys(data.result);
     setTotal(data.total);
+    setLoading(false);
   }
 
   function getPrettyDateString(dateString) {
@@ -120,6 +125,11 @@ function Journeys() {
           </FormControl>
         </Grid>
       </Grid>
+      {loading ? (
+        <Box sx={{ width: "100%" }}>
+          <LinearProgress />
+        </Box>
+      ) : null}
       <TableContainer component={Paper}>
         <Table size="small">
           <TableHead>
@@ -147,7 +157,7 @@ function Journeys() {
             </TableRow>
           </TableHead>
           <TableBody>
-            {journeys
+            {journeys && !loading
               ? journeys.map((j) => (
                   <TableRow key={j.id}>
                     <TableCell>{getPrettyDateString(j.departure)}</TableCell>

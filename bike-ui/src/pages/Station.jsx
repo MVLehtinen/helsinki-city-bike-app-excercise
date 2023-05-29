@@ -9,6 +9,7 @@ import {
   InputLabel,
   FormControl,
   Grid,
+  CircularProgress,
 } from "@mui/material";
 import { useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
@@ -19,6 +20,7 @@ function Station() {
   const [station, setStation] = useState(null);
   const [stationDetails, setStationDetails] = useState(null);
   const [month, setMonth] = useState(0);
+  const [loading, setLoading] = useState(true);
 
   function createMonthQueryString() {
     if (month == 0) return "";
@@ -26,12 +28,14 @@ function Station() {
   }
 
   async function getStationDetails() {
+    setLoading(true);
     const monthQuery = createMonthQueryString();
     const stationDetailsResponse = await fetch(
       "http://localhost:5000/api/stations/" + id + "/details" + monthQuery
     );
     const stationDetailsData = await stationDetailsResponse.json();
     setStationDetails(stationDetailsData);
+    setLoading(false);
   }
 
   async function getStation() {
@@ -98,7 +102,7 @@ function Station() {
           </FormControl>
         </Grid>
       </Grid>
-      {stationDetails ? (
+      {stationDetails && !loading ? (
         <>
           <Typography sx={{ mt: 2 }}>Top 5 Destinations</Typography>
           <Box sx={{ ml: 2 }}>
@@ -143,7 +147,9 @@ function Station() {
             </TableRow>
           </Table>
         </>
-      ) : null}
+      ) : (
+        <CircularProgress />
+      )}
     </>
   );
 }
