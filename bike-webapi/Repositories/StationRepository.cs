@@ -17,11 +17,11 @@ namespace bike_webapi.Repositories
 
         public PagedResultDto<Station> GetStations(int pageSize, int page, string? search)
         {
-            IQueryable<Station> stations = _context.Stations;
+            IQueryable<Station> stations = _context.Stations.OrderBy(s => s.Id);
 
             if (!String.IsNullOrWhiteSpace(search))
             {
-                stations = stations.Where(s => 
+                stations = stations.Where(s =>
                     s.Name.Contains(search) ||
                     s.Namn.Contains(search) ||
                     s.Nimi.Contains(search) ||
@@ -35,9 +35,9 @@ namespace bike_webapi.Repositories
             var total = stations.Count();
 
             stations = stations
-                .Skip(pageSize*(page - 1))
+                .Skip(pageSize * (page - 1))
                 .Take(pageSize);
-            
+
 
             return new PagedResultDto<Station>() { Result = stations.ToList(), Total = total };
         }
@@ -59,26 +59,26 @@ namespace bike_webapi.Repositories
             {
                 journeys = journeys.Where(j => j.Departure.Month == month);
             }
-            
+
             var top5Ids = journeys
                 .GroupBy(j => j.ReturnStationId)
                 .Select(g => new { Id = g.Key, Count = g.Count() })
                 .OrderByDescending(g => g.Count)
                 .Take(5)
                 .ToList();
-            
+
             var topStations = _context.Stations
                 .Where(s => top5Ids.Select(t => t.Id).Contains(s.Id))
                 .ToList()
                 .OrderBy(s => top5Ids.FindIndex(t => t.Id == s.Id))
                 .ToList();
-            
-            var topStationsWithCount = topStations.Select((s, i) => 
+
+            var topStationsWithCount = topStations.Select((s, i) =>
                 new CountedResultDto<Station>()
-                    {
-                        Total = top5Ids[i].Count,
-                        Item = s
-                    }
+                {
+                    Total = top5Ids[i].Count,
+                    Item = s
+                }
                 )
                 .ToList();
 
@@ -100,19 +100,19 @@ namespace bike_webapi.Repositories
                 .OrderByDescending(g => g.Count)
                 .Take(5)
                 .ToList();
-            
+
             var topStations = _context.Stations
                 .Where(s => top5Ids.Select(t => t.Id).Contains(s.Id))
                 .ToList()
                 .OrderBy(s => top5Ids.FindIndex(t => t.Id == s.Id))
                 .ToList();
-            
-            var topStationsWithCount = topStations.Select((s, i) => 
+
+            var topStationsWithCount = topStations.Select((s, i) =>
                 new CountedResultDto<Station>()
-                    {
-                        Total = top5Ids[i].Count,
-                        Item = s
-                    }
+                {
+                    Total = top5Ids[i].Count,
+                    Item = s
+                }
                 )
                 .ToList();
 
@@ -136,12 +136,12 @@ namespace bike_webapi.Repositories
             var totalReturns = returns.Count();
 
             return new StationDetailsDto()
-                {
-                    AverageDistanceOfDeparture = averageDistanceOfDeparture,
-                    AverageDistanceOfReturn = averageDistanceOfReturn,
-                    TotalDepartures = totalDepartures,
-                    TotalReturns = totalReturns
-                };
+            {
+                AverageDistanceOfDeparture = averageDistanceOfDeparture,
+                AverageDistanceOfReturn = averageDistanceOfReturn,
+                TotalDepartures = totalDepartures,
+                TotalReturns = totalReturns
+            };
         }
 
         public bool AddStation(Station station)
