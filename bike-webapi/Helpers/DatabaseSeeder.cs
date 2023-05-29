@@ -19,6 +19,7 @@ namespace bike_webapi.Helpers
             using (var reader = new StreamReader(filename))
             using (var csv = new CsvReader(reader, System.Globalization.CultureInfo.InvariantCulture))
             {
+                System.Console.WriteLine("Now reading file: {0}", filename);
                 List<Station> stations = new List<Station>();
 
                 reader.ReadLine();
@@ -60,6 +61,7 @@ namespace bike_webapi.Helpers
             using (var reader = new StreamReader(filename))
             using (var csv = new CsvReader(reader, System.Globalization.CultureInfo.InvariantCulture))
             {
+                System.Console.WriteLine("Now reading file: {0}", filename);
                 List<Journey> journeys = new List<Journey>();
 
                 reader.ReadLine();
@@ -92,9 +94,9 @@ namespace bike_webapi.Helpers
 
                         journeys.Add(journey);
                     }
-                    catch (Exception e)
+                    catch (Exception)
                     {
-                        System.Console.WriteLine(e.Message);
+                        continue;
                     }
                 }
                 journeys = journeys.Distinct(new JourneyEqualityComparer()).ToList();
